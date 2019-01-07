@@ -1,5 +1,6 @@
 ﻿using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Model.Context;
+using RestWithASPNETUdemy.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,72 +10,36 @@ namespace RestWithASPNETUdemy.Services
 {
     public class PersonService : IPersonService
     {
-        private readonly MySqlContext _context;
-        private volatile int count;
+        private readonly IPersonRepository _repository;
 
-
-        public PersonService(MySqlContext context)
+        public PersonService(IPersonRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public Person Create(Person person)
         {
-            try
-            {
-                _context.Add(person);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return person;
+           return _repository.Create(person);
         }
 
         public void Delete(long id)
         {
-            var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(id));
-            try
-            {
-                if(result != null) _context.Persons.Remove(result);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            _repository.Delete(id);
         }
 
         public List<Person> FindAll()
         {
-            return _context.Persons.ToList();
+            return _repository.FindAll();
         }
 
         public Person FindById(long id)
         {
-            return _context.Persons.SingleOrDefault(p => p.Id.Equals(id));
+            return _repository.FindById(id);
         }
 
         public Person Update(Person person)
         {
-            if (!_context.Persons.Any(p => p.Id.Equals(person.Id))) return new Person();
-
-            var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(person.Id));
-
-            try
-            {
-                _context.Entry(result).CurrentValues.SetValues(person);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return person;
+            return _repository.Update(person);
         }
-
     }
 }

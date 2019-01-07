@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RestWithASPNETUdemy.Model
 {
-    public class Person
+    public class Person : BaseEntity
     {
         public long? Id { get; set; }
         public string FirstName { get; set; }

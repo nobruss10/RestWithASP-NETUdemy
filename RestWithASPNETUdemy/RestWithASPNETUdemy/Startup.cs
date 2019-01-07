@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestWithASPNETUdemy.Model.Context;
+using RestWithASPNETUdemy.Repositories;
 using RestWithASPNETUdemy.Services;
 
 namespace RestWithASPNETUdemy
@@ -35,6 +36,7 @@ namespace RestWithASPNETUdemy
 
             //Dependency Injection
             services.AddScoped<IPersonService, PersonService>();
+            services.AddScoped<IPersonRepository, PersonRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
