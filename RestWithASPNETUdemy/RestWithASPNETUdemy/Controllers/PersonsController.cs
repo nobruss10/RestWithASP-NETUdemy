@@ -5,11 +5,11 @@ using RestWithASPNETUdemy.Services;
 namespace RestWithASPNETUdemy.Controllers
 {
     [Route("api/[controller]")]
-    public class PersonController : Controller
+    public class PersonsController : Controller
     {
         private readonly IPersonService _personService;
 
-        public PersonController(IPersonService personService)
+        public PersonsController(IPersonService personService)
         {
             _personService = personService;
         }
