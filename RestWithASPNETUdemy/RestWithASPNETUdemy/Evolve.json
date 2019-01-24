@@ -1,0 +1,7 @@
+{
+  "Evolve.Driver": "MySql.Data",
+  "Evolve.ConnectionString": "Server=localhost;Database=restaspnetcoreudemy;Uid=root;Pwd=",
+  "Evolve.Locations": "db",
+  "Evolve.Command": "migrate",
+  "Evolve.Placeholder.table4": "table_4"
+}

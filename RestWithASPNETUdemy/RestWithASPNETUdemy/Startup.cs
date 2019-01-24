@@ -1,34 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repositories;
 using RestWithASPNETUdemy.Services;
+using System;
+using System.Collections.Generic;
 
 namespace RestWithASPNETUdemy
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public readonly ILogger _logger;
+        public IHostingEnvironment _environment { get; }
+        public IConfiguration _configuration { get; }
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment environment)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _logger = logger;
+            _environment = environment;
         }
 
-        public IConfiguration Configuration { get; }
+       
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration["MySqlConnection:MySqlConnectionString"];
-            services.AddDbContext<MySqlContext>(options => options.UseMySql(connection));
+            var connectionString = _configuration["MySqlConnection:MySqlConnectionString"];
+            services.AddDbContext<MySqlContext>(options => options.UseMySql(connectionString));
+
+            if (_environment.IsDevelopment())
+            {
+                try
+                {
+                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+                    var evolve = new Evolve.Evolve("evolve.json", evolveConnection, msg => _logger.LogInformation(msg))
+                    {
+                        Locations = new List<string> { "db/migrations" },
+                        IsEraseDisabled = true,
+                    };
+
+                    evolve.Migrate();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogCritical("Database migration failed", ex);
+                    throw;
+                }
+            }
 
             services.AddMvc();
 
