@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestWithASPNETUdemy.Model.Base;
 
 namespace RestWithASPNETUdemy.Model.Context
 {
@@ -12,6 +13,7 @@ namespace RestWithASPNETUdemy.Model.Context
         { }
 
         public DbSet<Person> Persons { get; set; }
-       
+        public DbSet<Book> Books { get; set; }
+
     }
 }
