@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RestWithASPNETUdemy.Data.VO;
 using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Services;
 
@@ -31,7 +32,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // POST api/Person
         [HttpPost]
-        public IActionResult Post([FromBody]Person person)
+        public IActionResult Post([FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
             return new ObjectResult(_personService.Create(person));
@@ -39,7 +40,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // PUT api/Person/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Person person)
+        public IActionResult Put(int id, [FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
             return new ObjectResult(_personService.Update(person));

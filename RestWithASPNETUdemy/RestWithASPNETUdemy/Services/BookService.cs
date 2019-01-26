@@ -1,4 +1,5 @@
-﻿using RestWithASPNETUdemy.Model.Base;
+﻿using RestWithASPNETUdemy.Data.Converters;
+using RestWithASPNETUdemy.Data.VO;
 using RestWithASPNETUdemy.Repositories.Interfaces;
 using RestWithASPNETUdemy.Services.Interfaces;
 using System.Collections.Generic;
@@ -8,15 +9,17 @@ namespace RestWithASPNETUdemy.Services
     public class BookService : IBookService
     {
         private readonly IBookRepository _repository;
+        private readonly BookConverter _converter;
 
         public BookService(IBookRepository repository)
         {
             _repository = repository;
+            _converter = new BookConverter();
         }
 
-        public Book Create(Book book)
+        public BookVO Create(BookVO book)
         {
-            return _repository.Create(book);
+            return _converter.Parse(_repository.Create(_converter.Parse(book)));
         }
 
         public void Delete(long id)
@@ -24,19 +27,19 @@ namespace RestWithASPNETUdemy.Services
             _repository.Delete(id);
         }
 
-        public List<Book> FindAll()
+        public List<BookVO> FindAll()
         {
-            return _repository.FindAll();
+            return _converter.ParseList(_repository.FindAll());
         }
 
-        public Book FindById(long id)
+        public BookVO FindById(long id)
         {
-            return _repository.FindById(id);
+            return _converter.Parse(_repository.FindById(id));
         }
 
-        public Book Update(Book book)
+        public BookVO Update(BookVO book)
         {
-            return _repository.Update(book);
+            return _converter.Parse(_repository.Update(_converter.Parse(book)));
         }
     }
 }

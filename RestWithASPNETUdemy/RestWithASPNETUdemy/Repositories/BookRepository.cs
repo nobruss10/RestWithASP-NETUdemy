@@ -1,10 +1,6 @@
-﻿using RestWithASPNETUdemy.Model.Base;
+﻿using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RestWithASPNETUdemy.Repositories
 {

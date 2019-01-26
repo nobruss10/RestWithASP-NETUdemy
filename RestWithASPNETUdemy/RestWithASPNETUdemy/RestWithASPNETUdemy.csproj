@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="db\dataset\" />
-    <Folder Include="Model\Base\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

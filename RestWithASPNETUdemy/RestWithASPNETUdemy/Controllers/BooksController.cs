@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RestWithASPNETUdemy.Model.Base;
+using RestWithASPNETUdemy.Data.VO;
+using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Services.Interfaces;
 
 namespace RestWithASPNETUdemy.Controllers
@@ -31,7 +32,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // POST api/Book
         [HttpPost]
-        public IActionResult Post([FromBody]Book book)
+        public IActionResult Post([FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
             return new ObjectResult(_bookService.Create(book));
@@ -39,7 +40,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // PUT api/Book/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Book book)
+        public IActionResult Put(int id, [FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
             return new ObjectResult(_bookService.Update(book));

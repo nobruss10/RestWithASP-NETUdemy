@@ -1,4 +1,4 @@
-﻿using RestWithASPNETUdemy.Model.Base;
+﻿using RestWithASPNETUdemy.Model;
 
 namespace RestWithASPNETUdemy.Repositories.Interfaces
 {
