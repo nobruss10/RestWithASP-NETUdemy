@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repositories;
 using RestWithASPNETUdemy.Repositories.Interfaces;
@@ -56,7 +57,13 @@ namespace RestWithASPNETUdemy
                 }
             }
 
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xlm", MediaTypeHeaderValue.Parse("text/xlm"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
+            })
+            .AddXmlSerializerFormatters();
 
             services.AddApiVersioning();
 
