@@ -6,7 +6,7 @@ using RestWithASPNETUdemy.Services.Interfaces;
 namespace RestWithASPNETUdemy.Controllers
 {
     [ApiVersion("1")]
-    [Route("api/V{version:apiVersion}/[controller]")]
+    [Route("api/[controller]/V{version:apiVersion}")]
     public class BooksController : Controller
     {
         private readonly IBookService _bookService;

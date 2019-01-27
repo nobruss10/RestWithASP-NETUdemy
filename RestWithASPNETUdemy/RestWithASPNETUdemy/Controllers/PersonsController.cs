@@ -2,11 +2,12 @@
 using RestWithASPNETUdemy.Data.VO;
 using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Services;
+using Tapioca.HATEOAS;
 
 namespace RestWithASPNETUdemy.Controllers
 {
     [ApiVersion("1")]
-    [Route("api/V{version:apiVersion}/[controller]")]
+    [Route("api/[controller]/V{version:apiVersion}")]
     public class PersonsController : Controller
     {
         private readonly IPersonService _personService;
@@ -18,13 +19,16 @@ namespace RestWithASPNETUdemy.Controllers
 
         // GET api/Person
         [HttpGet]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
-            return Ok(_personService.FindAll());
+            var result = _personService.FindAll();
+            return Ok(result);
         }
 
         // GET api/Person/5
         [HttpGet("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
             return Ok(_personService.FindById(id));
@@ -32,6 +36,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // POST api/Person
         [HttpPost]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
@@ -40,6 +45,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // PUT api/Person/5
         [HttpPut("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put(int id, [FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
@@ -48,6 +54,7 @@ namespace RestWithASPNETUdemy.Controllers
 
         // DELETE api/Person/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Delete(int id)
         {
             _personService.Delete(id);

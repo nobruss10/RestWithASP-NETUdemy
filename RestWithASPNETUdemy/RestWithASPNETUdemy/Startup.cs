@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using RestWithASPNETUdemy.HyperMedia;
 using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repositories;
 using RestWithASPNETUdemy.Repositories.Interfaces;
@@ -12,6 +13,7 @@ using RestWithASPNETUdemy.Services;
 using RestWithASPNETUdemy.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using Tapioca.HATEOAS;
 
 namespace RestWithASPNETUdemy
 {
@@ -65,6 +67,10 @@ namespace RestWithASPNETUdemy
             })
             .AddXmlSerializerFormatters();
 
+            var filtertOptions = new HyperMediaFilterOptions();
+            filtertOptions.ObjectContentResponseEnricherList.Add(new PersonEnricher());
+            services.AddSingleton(filtertOptions);
+
             services.AddApiVersioning();
 
             //Dependency Injection
@@ -82,7 +88,12 @@ namespace RestWithASPNETUdemy
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc(routes => 
+            {
+                routes.MapRoute(
+                    name: "DefaultApi",
+                    template: "{controller=Values}/{id?}");
+            });
         }
     }
 }

@@ -11,7 +11,7 @@ namespace RestWithASPNETUdemy.Data.Converters
         public Book Parse(BookVO origin)
         {
 
-            if (origin == null) new Book();
+            if (origin == null) return new Book();
             return new Book
             {
                 Id = origin.Id,
@@ -24,7 +24,7 @@ namespace RestWithASPNETUdemy.Data.Converters
 
         public BookVO Parse(Book origin)
         {
-            if (origin == null) new BookVO();
+            if (origin == null) return new BookVO();
             return new BookVO
             {
                 Id = origin.Id,
