@@ -62,6 +62,7 @@ namespace RestWithASPNETUdemy.Repositories
 
         public TEntity Update(TEntity model)
         {
+            if(FindById((long)model.Id) == null) return null; 
             var entry = _context.Entry(model);
             DbSet.Attach(model);
             entry.State = EntityState.Modified;

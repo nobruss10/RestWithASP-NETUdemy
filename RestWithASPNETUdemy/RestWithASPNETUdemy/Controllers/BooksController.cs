@@ -2,6 +2,8 @@
 using RestWithASPNETUdemy.Data.VO;
 using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Services.Interfaces;
+using System.Collections.Generic;
+using Tapioca.HATEOAS;
 
 namespace RestWithASPNETUdemy.Controllers
 {
@@ -18,6 +20,11 @@ namespace RestWithASPNETUdemy.Controllers
 
         // GET api/Book
         [HttpGet]
+        [ProducesResponseType(typeof(List<BookVO>), 200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
             return Ok(_bookService.FindAll());
@@ -25,6 +32,12 @@ namespace RestWithASPNETUdemy.Controllers
 
         // GET api/Book/5
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(BookVO), 200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
             return Ok(_bookService.FindById(id));
@@ -32,6 +45,10 @@ namespace RestWithASPNETUdemy.Controllers
 
         // POST api/Book
         [HttpPost]
+        [ProducesResponseType(typeof(BookVO), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
@@ -40,6 +57,10 @@ namespace RestWithASPNETUdemy.Controllers
 
         // PUT api/Book/5
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(BookVO), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put(int id, [FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
@@ -48,6 +69,9 @@ namespace RestWithASPNETUdemy.Controllers
 
         // DELETE api/Book/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public IActionResult Delete(int id)
         {
             _bookService.Delete(id);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using RestWithASPNETUdemy.Repositories;
 using RestWithASPNETUdemy.Repositories.Interfaces;
 using RestWithASPNETUdemy.Services;
 using RestWithASPNETUdemy.Services.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using Tapioca.HATEOAS;
@@ -67,11 +69,25 @@ namespace RestWithASPNETUdemy
             })
             .AddXmlSerializerFormatters();
 
+            //Hateoas
             var filtertOptions = new HyperMediaFilterOptions();
             filtertOptions.ObjectContentResponseEnricherList.Add(new PersonEnricher());
+            filtertOptions.ObjectContentResponseEnricherList.Add(new BookEnricher());
             services.AddSingleton(filtertOptions);
 
-            services.AddApiVersioning();
+            services.AddApiVersioning(option => option.ReportApiVersions = true);
+
+            //Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                    new Info
+                    {
+                        Title = "Restfull API With APS.NET CORE",
+                        Version = "v1"
+                    });
+                c.IgnoreObsoleteProperties();
+            });
 
             //Dependency Injection
             services.AddScoped<IPersonService, PersonService>();
@@ -87,6 +103,17 @@ namespace RestWithASPNETUdemy
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+            app.UseRewriter(option);
 
             app.UseMvc(routes => 
             {

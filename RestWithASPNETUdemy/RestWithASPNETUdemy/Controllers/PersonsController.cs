@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNETUdemy.Data.VO;
-using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Services;
+using System.Collections.Generic;
 using Tapioca.HATEOAS;
+using Swashbuckle.AspNetCore;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace RestWithASPNETUdemy.Controllers
 {
@@ -19,6 +21,10 @@ namespace RestWithASPNETUdemy.Controllers
 
         // GET api/Person
         [HttpGet]
+        [ProducesResponseType(typeof(List<PersonVO>), 200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
@@ -28,6 +34,11 @@ namespace RestWithASPNETUdemy.Controllers
 
         // GET api/Person/5
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(PersonVO), 200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
@@ -35,7 +46,10 @@ namespace RestWithASPNETUdemy.Controllers
         }
 
         // POST api/Person
-        [HttpPost]
+        [HttpPost]    
+        [ProducesResponseType(typeof(PersonVO), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody]PersonVO person)
         {
@@ -45,6 +59,9 @@ namespace RestWithASPNETUdemy.Controllers
 
         // PUT api/Person/5
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(PersonVO), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put(int id, [FromBody]PersonVO person)
         {
@@ -54,6 +71,9 @@ namespace RestWithASPNETUdemy.Controllers
 
         // DELETE api/Person/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Delete(int id)
         {
