@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using RestWithASPNETUdemy.HyperMedia;
 using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repositories;
 using RestWithASPNETUdemy.Repositories.Interfaces;
+using RestWithASPNETUdemy.Security.Configuration;
 using RestWithASPNETUdemy.Services;
 using RestWithASPNETUdemy.Services.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
@@ -32,7 +36,7 @@ namespace RestWithASPNETUdemy
             _environment = environment;
         }
 
-       
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,26 +44,44 @@ namespace RestWithASPNETUdemy
             var connectionString = _configuration["MySqlConnection:MySqlConnectionString"];
             services.AddDbContext<MySqlContext>(options => options.UseMySql(connectionString));
 
-            if (_environment.IsDevelopment())
+            //Adding Migration Support
+            ExecuteMigration(connectionString);
+
+            var singningConfiguration = new SingningConfiguration();
+            services.AddSingleton(singningConfiguration);
+
+            var tokenConfiguration = new TokenConfiguration();
+
+            new ConfigureFromConfigurationOptions<TokenConfiguration>(
+                    _configuration.GetSection("TokenConfigurations")
+            )
+            .Configure(tokenConfiguration);
+
+            services.AddSingleton(tokenConfiguration);
+
+            services.AddAuthentication(authOptions =>
             {
-                try
-                {
-                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-                    var evolve = new Evolve.Evolve("evolve.json", evolveConnection, msg => _logger.LogInformation(msg))
-                    {
-                        Locations = new List<string> { "db/migrations" },
-                        IsEraseDisabled = true,
-                    };
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions =>
+            {
+                var paramsValidation = bearerOptions.TokenValidationParameters;
+                paramsValidation.IssuerSigningKey = singningConfiguration.Key;
+                paramsValidation.ValidAudience = tokenConfiguration.Audience;
+                paramsValidation.ValidIssuer = tokenConfiguration.Issuer;
 
-                    evolve.Migrate();
-                }
-                catch (Exception ex)
-                {
+                paramsValidation.ValidateLifetime = true;
 
-                    _logger.LogCritical("Database migration failed", ex);
-                    throw;
-                }
-            }
+                paramsValidation.ClockSkew = TimeSpan.Zero;
+
+            });
+
+            services.AddAuthorization(auth =>
+            {
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser().Build());
+            });
 
             services.AddMvc(options =>
             {
@@ -94,6 +116,8 @@ namespace RestWithASPNETUdemy
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,12 +139,36 @@ namespace RestWithASPNETUdemy
             option.AddRedirect("^$", "swagger");
             app.UseRewriter(option);
 
-            app.UseMvc(routes => 
+            app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "DefaultApi",
                     template: "{controller=Values}/{id?}");
             });
         }
+
+        private void ExecuteMigration(string connectionString)
+        {
+            if (_environment.IsDevelopment())
+            {
+                try
+                {
+                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+                    var evolve = new Evolve.Evolve("evolve.json", evolveConnection, msg => _logger.LogInformation(msg))
+                    {
+                        Locations = new List<string> { "db/migrations", "db/dataset" },
+                        IsEraseDisabled = true,
+                    };
+
+                    evolve.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical("Database migration failed", ex);
+                    throw;
+                }
+            }
+        }
+
     }
 }
