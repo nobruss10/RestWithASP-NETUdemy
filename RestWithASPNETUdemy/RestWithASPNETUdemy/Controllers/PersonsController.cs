@@ -20,6 +20,19 @@ namespace RestWithASPNETUdemy.Controllers
             _personService = personService;
         }
 
+        [HttpGet("findbyname")]
+        [ProducesResponseType(typeof(List<PersonVO>), 200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [Authorize("Bearer")]
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult GetByName([FromQuery] string firstName, string lastName)
+        {
+            var result = _personService.FindByName(firstName, lastName);
+            return Ok(result);
+        }
+
         // GET api/Person
         [HttpGet]
         [ProducesResponseType(typeof(List<PersonVO>), 200)]

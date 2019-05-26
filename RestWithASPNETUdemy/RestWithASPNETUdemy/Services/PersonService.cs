@@ -1,12 +1,7 @@
 ﻿using RestWithASPNETUdemy.Data.Converters;
 using RestWithASPNETUdemy.Data.VO;
-using RestWithASPNETUdemy.Model;
-using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
 namespace RestWithASPNETUdemy.Services
 {
@@ -39,6 +34,11 @@ namespace RestWithASPNETUdemy.Services
         public PersonVO FindById(long id)
         {
             return _converter.Parse(_repository.FindById(id));
+        }
+
+        public List<PersonVO> FindByName(string firtName, string lastName)
+        {
+            return _converter.ParseList(_repository.FindByName(firtName, lastName));
         }
 
         public PersonVO Update(PersonVO person)

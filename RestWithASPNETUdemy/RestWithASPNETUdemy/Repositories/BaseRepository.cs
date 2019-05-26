@@ -5,6 +5,7 @@ using RestWithASPNETUdemy.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace RestWithASPNETUdemy.Repositories
 {
@@ -53,6 +54,11 @@ namespace RestWithASPNETUdemy.Repositories
         public List<TEntity> FindAll()
         {
             return DbSet.ToList();
+        }
+
+        protected IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> where)
+        {
+            return DbSet.Where(where);
         }
 
         public TEntity FindById(long id)
