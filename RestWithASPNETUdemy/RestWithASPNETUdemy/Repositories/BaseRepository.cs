@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace RestWithASPNETUdemy.Repositories
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly MySqlContext _context;
         protected DbSet<TEntity> DbSet;
@@ -61,6 +61,7 @@ namespace RestWithASPNETUdemy.Repositories
             return DbSet.Where(where);
         }
 
+
         public TEntity FindById(long id)
         {
              return DbSet.Find(id);
@@ -75,6 +76,11 @@ namespace RestWithASPNETUdemy.Repositories
             _context.SaveChanges();
 
             return model;
+        }
+
+        protected List<TEntity> ExecuteQuery(string query)
+        {
+            return DbSet.FromSql<TEntity>(query).ToList();
         }
     }
 }

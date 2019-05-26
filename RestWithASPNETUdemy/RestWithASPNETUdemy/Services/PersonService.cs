@@ -1,7 +1,9 @@
 ﻿using RestWithASPNETUdemy.Data.Converters;
 using RestWithASPNETUdemy.Data.VO;
+using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Repositories;
 using System.Collections.Generic;
+using Tapioca.HATEOAS.Utils;
 
 namespace RestWithASPNETUdemy.Services
 {
@@ -44,6 +46,20 @@ namespace RestWithASPNETUdemy.Services
         public PersonVO Update(PersonVO person)
         {
             return _converter.Parse(_repository.Update(_converter.Parse(person)));
+        }
+
+        public PagedSearchDTO<PersonVO> FindWithPagedSearch(string name, string sortDirection, int pageSize, int page)
+        {
+            var result = _repository.FindWithPagedSearch(name, sortDirection, pageSize, page);
+
+            return new PagedSearchDTO<PersonVO>
+            {
+                CurrentPage = page,
+                List = _converter.ParseList(result.Results),
+                PageSize = pageSize,
+                SortDirections = sortDirection,
+                TotalResults = result.TotalResults
+            };
         }
     }
 }

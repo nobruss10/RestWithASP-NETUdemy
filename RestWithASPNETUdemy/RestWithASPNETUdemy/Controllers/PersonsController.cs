@@ -33,6 +33,18 @@ namespace RestWithASPNETUdemy.Controllers
             return Ok(result);
         }
 
+        [HttpGet("find-with-paged-search/{sortDirection}/{pageSize}/{page}")]
+        [ProducesResponseType(typeof(List<PersonVO>), 200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [Authorize("Bearer")]
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult FindWithPagedSearch([FromQuery] string name, string sortDirection, int pageSize, int page)
+        {
+            return new OkObjectResult(_personService.FindWithPagedSearch(name, sortDirection, pageSize, page));
+        }
+
         // GET api/Person
         [HttpGet]
         [ProducesResponseType(typeof(List<PersonVO>), 200)]
